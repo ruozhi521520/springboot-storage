@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>查看欠款</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../../font/iconfont.css"/>
+</head>
+<body class="pear-container">
+
+
+<div class="layui-form-item layui-hide">
+    <label class="layui-form-label">编号</label>
+    <div class="layui-input-block">
+        <input type="text" th:value="${buyer.id}" name="buyerId" lay-verify="title" id="buyerId"
+               autocomplete="off" placeholder="" class="layui-input">
+    </div>
+</div>
+
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="out-table" lay-filter="out-table" class="layui-hide"></table>
+    </div>
+</div>
+
+<script type="text/html" id="check">
+    <a class="layui-btn layui-btn-xs" lay-event="payment">回款</a>
+</script>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'common', 'laydate'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+
+        let cols = [
+            [
+                {title: '序号', field: 'id', align: 'center', totalRowText: '合计',},
+                {title: '买家名称', field: 'buyerName', align: 'center'},
+                {title: '物资名称', field: 'itemName', align: 'center'},
+                {title: '数量', field: 'orderQty', align: 'center'},
+                {title: '单位', field: 'orderUnit', align: 'center'},
+                {title: '数量', field: 'issueQty', align: 'center'},
+                {title: '单位', field: 'issueUnit', align: 'center'},
+                {title: '单价', field: 'issueCost', align: 'center'},
+                {title: '总价', field: 'lineCost', align: 'center', totalRow: true},
+                {title: '备注', field: 'remark', align: 'center'},
+                {title: '仓库名称', field: 'storeName', align: 'center'},
+                {title: '日期', field: 'addDate', align: 'center',},
+                {fixed: 'right', align: 'center', toolbar: '#check'}
+
+            ]
+        ]
+
+
+        table.render({
+            elem: '#out-table',
+            url: '/out/outs',
+            title: "出库清单",
+            where: {buyerId: document.getElementById('buyerId').value, check2: '1'},
+            page: true,
+            cols: cols,
+            skin: 'line', totalRow: true,
+            even: true,
+            toolbar: '#out-toolbar',
+            defaultToolbar: [{
+                title: '刷新',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'exports'],
+            text: {none: '未到找对应的数据'},
+            limits: [10, 20, 40, 60, 80]
+        });
+
+        table.on('tool(out-table)', function (obj) {
+            if (obj.event === 'payment') {
+                window.payment(obj);
+            }
+        });
+
+        form.on('submit(out-query)', function (data) {
+            window.refresh(data.field);
+            return false;
+        });
+
+        window.refresh = function (param) {
+            table.reload('out-table', {
+                where: param
+            });
+        }
+        window.payment = function (param) {
+            var title = param.data.addDate + '日,金额：' + param.data.lineCost + ' 元,确认已回款?'
+            layer.confirm(title, {icon: 3, title: '提示'}, function (index) {
+                $.ajax({
+                    url: '../out/update',
+                    data: JSON.stringify(param.data),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    type: 'post',
+                    success: function (result) {
+                        if (result.success) {
+                            // parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            // layer.msg(data.msg, {icon: 1, time: 1000});
+                            layui.table.reload("out-table");
+                            parent.layui.table.reload("buyer-table");
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+                layer.close(index);
+            })
+
+        }
+
+    })
+</script>
+</body>
+</html>

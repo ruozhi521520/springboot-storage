@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.StoreMapper">
+
+    <select id="selectList" resultType="cn.lu.lrp.entity.Store">
+        select *
+        from lrp_store
+        <where>
+            <if test="storeName != null and storeName != ''">
+                and storeName like concat('%', '${storeName}', '%')
+            </if>
+            <if test="status != null and status != ''">
+                and status = ${status}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStoreFromStore" resultType="cn.lu.lrp.entity.Store">
+        select *
+        from lrp_store
+        <where>
+            <if test="storeName != null and storeName != ''">
+                and storeName = #{storeName}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="status != null and status != ''">
+                and status = ${status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="cn.lu.lrp.entity.Item">
+        insert into lrp_store(storeName, contacts, phone, remark, status, addDate)
+        values (#{storeName}, #{contacts}, #{phone}, #{remark}, 1, sysdate());
+    </insert>
+
+    <update id="update">
+        update lrp_store
+        set status = #{status}
+        where id = #{id}
+    </update>
+
+</mapper>

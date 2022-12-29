@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>盘点明细</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../../font/iconfont.css"/>
+</head>
+<body class="pear-container">
+
+
+<div class="layui-form-item layui-hide">
+    <label class="layui-form-label">编号</label>
+    <div class="layui-input-block">
+        <input type="text" th:value="${id}" name="pdId" lay-verify="title" id="pdId"
+               autocomplete="off" placeholder="" class="layui-input">
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="pdLine-table" lay-filter="out-table" class="layui-hide"></table>
+    </div>
+</div>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'common', 'laydate'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+
+        let cols = [
+            [
+                {title: '序号', field: 'id', align: 'center', totalRowText: '合计',},
+                {title: '物资名称', field: 'itemName', align: 'center'},
+                {title: '数量', field: 'orderQty', align: 'center'},
+                {title: '单位', field: 'orderUnit', align: 'center'},
+                {title: '数量', field: 'issueQty', align: 'center'},
+                {title: '单位', field: 'issueUnit', align: 'center'},
+                {title: '仓库名称', field: 'storeName', align: 'center'},
+
+            ]
+        ]
+
+
+        table.render({
+            elem: '#pdLine-table',
+            url: 'datas',
+            title: "出库清单",
+            where: {id: document.getElementById('pdId').value},
+            page: false,
+            limit:Number.MAX_VALUE,
+            cols: cols,
+            skin: 'line',
+            even: true,
+            toolbar: '#pdLine-toolbar',
+            defaultToolbar: [{
+                title: '刷新',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'exports'],
+            text: {none: '未到找对应的数据'}
+        });
+
+        table.on('tool(out-table)', function (obj) {
+            if (obj.event === 'payment') {
+                window.payment(obj);
+            }
+        });
+
+        form.on('submit(out-query)', function (data) {
+            window.refresh(data.field);
+            return false;
+        });
+
+        window.refresh = function (param) {
+            table.reload('pdLine-table', {
+                where: param
+            });
+        }
+
+
+    })
+</script>
+</body>
+</html>

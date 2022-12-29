@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.BuyerMapper">
+
+    <select id="selectList" resultType="cn.lu.lrp.entity.Buyer">
+        select lb.*,(select round(sum(lineCost),2) from lrp_outbound lo where lo.buyerId = lb.id and lo.isCheck = 0 and
+        lo.isPayment = 0) as total
+        from lrp_buyer lb
+        <where>
+            <if test="buyerName != null and buyerName != ''">
+                and buyerName like concat('%', '${buyerName}', '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone like concat('%', '${phone}', '%')
+            </if>
+            <if test="address != null and address != ''">
+                and address like concat('%', '${address}', '%')
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark like concat('%', '${remark}', '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getBuyerByID" resultType="cn.lu.lrp.entity.Buyer">
+        select *
+        from lrp_buyer
+        <where>
+            <if test="id != null and id != ''">
+                and id = ${id}
+            </if>
+        </where>
+    </select>
+
+    <select id="getBuyerByBuyer" resultType="cn.lu.lrp.entity.Buyer">
+        select *
+        from lrp_buyer
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="buyerName != null and buyerName != ''">
+                and buyerName = #{buyerName}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="cn.lu.lrp.entity.Item">
+        insert into lrp_buyer(buyerName, phone, address, remark, addDate)
+        values (#{buyerName}, #{phone}, #{address}, #{remark}, sysdate());
+    </insert>
+
+    <update id="update">
+        update lrp_buyer
+        set buyerName = #{buyerName},
+            phone     = #{phone},
+            address   = #{address},
+            remark    = #{remark}
+        where id = #{id}
+    </update>
+
+</mapper>

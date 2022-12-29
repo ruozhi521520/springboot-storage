@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>账单管理</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">事由</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="subject_matter" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="startDate" id="date" lay-verify="" placeholder="yyyy-MM-dd"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="endDate" id="date1" lay-verify="" placeholder="yyyy-MM-dd"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="order-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="order-table" lay-filter="order-table" class="layui-hide"></table>
+    </div>
+</div>
+
+<script type="text/html" id="order-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+</script>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'common', 'laydate'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#date'
+        });
+
+        laydate.render({
+            elem: '#date1'
+        });
+
+        let cols = [
+            [
+                {title: '序号', field: 'id', align: 'center', totalRowText: '合计',},
+                {title: '事由', field: 'subject_matter', align: 'center'},
+                {title: '支出', field: 'expenditure', align: 'center', totalRow: true},
+                {title: '收入', field: 'income', align: 'center', totalRow: true},
+                {title: '备注', field: 'remark', align: 'center'},
+                {
+                    title: '日期',
+                    field: 'addDate',
+                    align: 'center',
+                    templet: "<div>{{layui.util.toDateString(d.ordertime, 'yyyy年MM月dd日')}}</div>"
+                },
+            ]
+        ]
+
+        function formatDate(data) {
+            var d = new Date(data),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
+        table.render({
+            elem: '#order-table',
+            url: 'orders',
+            title: "账单清单",
+            // where: {addDate: formatDate(new Date())},
+            page: true,
+            cols: cols,
+            skin: 'line',
+            even: true, totalRow: true,
+            toolbar: '#order-toolbar',
+            defaultToolbar: [{
+                title: '刷新',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'exports'],
+            text: {none: '未到找对应的数据'},
+            limits: [10, 20, 40, 60, 80]
+        });
+
+        table.on('toolbar(order-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                table.reload('order-table');
+            }
+        });
+
+        form.on('submit(order-query)', function (data) {
+            window.refresh(data.field);
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增账单',
+                shade: 0.1,
+                area: [common.isModile() ? '100%' : '400px', common.isModile() ? '100%' : '450px'],
+                content: 'add'
+            });
+
+
+            // parent.layui.tab.addTabOnlyByElem("content", {
+            //     id: 100,
+            //     title: '新增入库',
+            //     url: 'in/add',
+            //     close: true
+            // })
+        }
+
+        window.refresh = function (param) {
+            table.reload('order-table', {where: param});
+        }
+
+    })
+</script>
+</body>
+</html>

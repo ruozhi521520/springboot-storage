@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.InBoundMapper">
+
+    <select id="selectList" resultType="cn.lu.lrp.entity.InBound" parameterType="cn.lu.lrp.entity.InBound">
+        select li.id,
+        li2.id as itemId,
+        li2.itemName,
+        li.orderQty,
+        li2.orderUnit,
+        li.issueQty,
+        li2.issueUnit,
+        ls.id as storeId,
+        ls.storeName,
+        li.remark,
+        date_format(li.addDate,'%Y-%m-%d') as addDate
+        from lrp_inbound li
+        left join lrp_item li2 on li.itemId = li2.id
+        left join lrp_store ls on li.storeId = ls.id
+        <where>
+            <if test="itemName != null and itemName != ''">
+                and li2.itemName like concat('%', '${itemName}', '%')
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and ls.storeName like concat('%', '${storeName}', '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and date_format(li.addDate,'%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and date_format(li.addDate,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        order by li.addDate desc, li.id desc
+    </select>
+
+    <insert id="save" parameterType="cn.lu.lrp.entity.InBound">
+        insert into lrp_inbound(itemId, orderQty, issueQty, storeId, remark, addDate)
+        values (#{itemId}, #{orderQty}, #{issueQty}, #{storeId}, #{remark}, #{addDate});
+    </insert>
+
+</mapper>

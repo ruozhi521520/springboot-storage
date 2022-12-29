@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.OutBoundMapper">
+
+    <select id="selectList" resultType="cn.lu.lrp.entity.OutBound" parameterType="cn.lu.lrp.entity.OutBound">
+        select lo.id,
+        lb.id as buyerId,
+        lb.buyerName,
+        li.id as itemId,
+        li.itemName,
+        lo.orderQty,
+        li.orderUnit,
+        lo.issueQty,
+        li.issueUnit,
+        lo.issueCost,
+        lo.lineCost,
+        lo.isCheck,
+        lo.isPayment,
+        ls.id as storeId,
+        ls.storeName,
+        lo.remark,
+        date_format(lo.addDate, '%Y-%m-%d') as addDate
+        from lrp_outbound lo
+        left join lrp_item li on lo.itemId = li.id
+        left join lrp_buyer lb on lo.buyerId = lb.id
+        left join lrp_store ls on lo.storeId = ls.id
+        <where>
+            <if test="itemName != null and itemName != ''">
+                and li.itemName like concat('%', '${itemName}', '%')
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and ls.storeName like concat('%', '${storeName}', '%')
+            </if>
+            <if test="buyerId != null and buyerId != ''">
+                and lb.id =#{buyerId}
+            </if>
+            <if test="buyerName != null and buyerName != ''">
+                and lb.buyerName like concat('%', '${buyerName}', '%')
+            </if>
+            <if test="isPayment != null and isPayment != ''">
+                and lo.isPayment = #{isPayment}
+            </if>
+            <if test="isCheck != null and isCheck != ''">
+                and lo.isCheck = #{isCheck}
+            </if>
+            <if test="check1 != null and check1 != ''">
+                and lo.isCheck = 1
+            </if>
+            <if test="check2 != null and check2 != ''">
+                and lo.isCheck = 0
+            </if>
+            <if test="payment1 != null and payment1 != ''">
+                and lo.isPayment = 1
+            </if>
+            <if test="payment2 != null and payment2 != ''">
+                and lo.isPayment = 0
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and date_format(lo.addDate,'%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and date_format(lo.addDate,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        order by lo.addDate desc ,lo.id desc
+    </select>
+
+    <insert id="save" parameterType="cn.lu.lrp.entity.OutBound">
+        insert into lrp_outbound(itemId, buyerId, orderQty, issueQty, issueCost, lineCost, storeId, isCheck, isPayment,
+                                 remark, addDate)
+        values (#{itemId}, #{buyerId}, #{orderQty}, #{issueQty}, #{issueCost}, #{lineCost}, #{storeId}, #{isCheck},
+                #{isPayment}, #{remark}, #{addDate});
+    </insert>
+
+    <update id="update">
+        update lrp_outbound
+        set isCheck = 1
+        where id = #{id}
+    </update>
+
+</mapper>

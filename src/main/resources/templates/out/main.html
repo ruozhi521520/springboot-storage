@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>出库管理</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../../font/iconfont.css"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">买家名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="buyerName" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">仓库名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="storeName" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">物资名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="itemName" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">时间</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="startDate" id="date" lay-verify="" placeholder="yyyy-MM-dd"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="endDate" id="date1" lay-verify="" placeholder="yyyy-MM-dd"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">收款</label>
+                        <div class="layui-input-inline">
+                            <input type="checkbox" name="check1" lay-skin="primary" title="是">
+                            <input type="checkbox" name="check2" lay-skin="primary" title="否">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">代收</label>
+                        <div class="layui-input-inline">
+                            <input type="checkbox" name="payment1" lay-skin="primary" title="是">
+                            <input type="checkbox" name="payment2" lay-skin="primary" title="否">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-inline">
+                        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="out-query">
+                            <i class="layui-icon layui-icon-search"></i>
+                            查询
+                        </button>
+                        <button type="reset" class="pear-btn pear-btn-md">
+                            <i class="layui-icon layui-icon-refresh"></i>
+                            重置
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="out-table" lay-filter="out-table" class="layui-hide"></table>
+    </div>
+</div>
+
+<script type="text/html" id="out-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+
+    <button type="button" class="pear-btn pear-btn-primary pear-btn-md" id="LAY-excel-upload">
+        <i class="layui-icon">&#xe67c;</i>导入出库
+    </button>
+
+    <a href="../../excel/出库模板.xlsx" class="pear-btn pear-btn-primary pear-btn-md">下载出库模板</a>
+
+</script>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script src="../../component/layui_exts/excel.js"></script>
+
+<script>
+    layui.use(['table', 'form', 'jquery', 'common', 'laydate', 'excel', 'upload'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+        var laydate = layui.laydate;
+        let upload = layui.upload;
+        let excel = layui.excel;
+
+        laydate.render({
+            elem: '#date'
+        });
+
+        laydate.render({
+            elem: '#date1'
+        });
+
+        let cols = [
+            [
+                {title: '序号', field: 'id', align: 'center',},
+                {title: '买家名称', field: 'buyerName', align: 'center'},
+                {title: '物资名称', field: 'itemName', align: 'center'},
+                {title: '数量', field: 'orderQty', align: 'center'},
+                {title: '单位', field: 'orderUnit', align: 'center'},
+                {title: '数量', field: 'issueQty', align: 'center'},
+                {title: '单位', field: 'issueUnit', align: 'center'},
+                {title: '单价', field: 'issueCost', align: 'center'},
+                {title: '总价', field: 'lineCost', align: 'center'},
+                {
+                    title: '是否回款', field: 'isCheck', align: 'center', templet: function (d) {
+                        if (d.isCheck === '1') {
+                            return '<i class="iconfont icon-duihao-" style="color: green"></i>'
+                        } else {
+                            return '<i class="iconfont icon-cuohao02" style="color: red"></i>'
+                        }
+                    }
+                },
+                {
+                    title: '是否代收', field: 'isPayment', align: 'center', templet: function (d) {
+                        if (d.isPayment === '1') {
+                            return '<i class="iconfont icon-dai" style="color: green"></i>'
+                        } else {
+                            return '';
+                        }
+
+                    }
+                },
+                {title: '备注', field: 'remark', align: 'center'},
+                {title: '仓库名称', field: 'storeName', align: 'center'},
+                {title: '日期', field: 'addDate', align: 'center'}
+            ]
+        ]
+
+        function formatDate(data) {
+            var d = new Date(data),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
+        table.render({
+            elem: '#out-table',
+            url: '/out/outs',
+            title: "出库清单",
+            where: {startDate: formatDate(new Date())},
+            page: true,
+            cols: cols,
+            skin: 'line',
+            even: true,
+            toolbar: '#out-toolbar',
+            defaultToolbar: [{
+                title: '刷新',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            },
+                //     {
+                //     title: '导出到 Excel 文件',
+                //     layEvent: 'export',
+                //     icon: 'layui-icon-export',
+                // },
+                'exports'],
+            text: {none: '未到找对应的数据'},
+            limits: [10, 20, 40, 60, 80]
+        });
+
+        table.on('toolbar(out-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                table.reload('out-table');
+            } else if (obj.event === 'export') {
+                window.export(obj.config);
+            }
+        });
+
+        form.on('submit(out-query)', function (data) {
+            window.refresh(data.field);
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增出库',
+                shade: 0.1,
+                area: [common.isModile() ? '100%' : '1000px', common.isModile() ? '100%' : '559px'],
+                content: 'add'
+            });
+
+
+            // parent.layui.tab.addTabOnlyByElem("content", {
+            //     id: 100,
+            //     title: '新增入库',
+            //     url: 'in/add',
+            //     close: true
+            // })
+
+        }
+
+        window.export = function (param) {
+            var where = param.where;
+            console.log(where);
+            $.ajax({
+                url: 'outs1?storeName=' + where.storeName + "&startDate=" + where.startDate +
+                    "&buyerName=" + where.buyerName + '&itemName=' + where.itemName +
+                    '&endDate=' + where.endDate + '&check1=' + where.check1 +
+                    '&check2=' + where.check2 + '&payment1=' + where.payment1 + '&payment2=' + where.payment2
+                ,
+                where: JSON.stringify(param.where),
+                dataType: 'json',
+                type: 'get',
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+
+        }
+
+        window.refresh = function (param) {
+            table.reload('out-table', {
+                where: param
+            });
+        }
+
+        /**
+         *  upload上传实例
+         */
+        upload.render({
+            elem: '#LAY-excel-upload'
+            , url: '/upload/'
+            , auto: false
+            , accept: 'file'
+            , choose: function (obj) {
+                var files = obj.pushFile()
+                var fileArr = Object.values(files)
+
+                for (var index in files) {
+                    if (files.hasOwnProperty(index)) {
+                        delete files[index]
+                    }
+                }
+                $('#LAY-excel-upload').next().val('');
+                uploadExcel(fileArr)
+            }
+        });
+
+        /**
+         * 上传excel的处理函数，传入文件对象数组
+         * @param  {[type]} files [description]
+         * @return {[type]}       [description]
+         */
+        function uploadExcel(files) {
+            try {
+                excel.importExcel(files, {
+                    fields: {
+                        'storeName': 'A'
+                        , 'buyerName': 'B'
+                        , 'itemName': 'C'
+                        , 'orderQty': 'D'
+                        , 'orderUnit': 'E'
+                        , 'issueQty': 'F'
+                        , 'issueUnit': 'G'
+                        , 'issueCost': 'H'
+                        , 'lineCost': 'I'
+                        , 'isCheck': 'J'
+                        , 'isPayment': 'K'
+                        , 'remark': 'L'
+                        , 'addDate': 'M'
+                    }
+                }, function (data) {
+                    data[0].Sheet1.shift()
+                    $.ajax({
+                        url: '../imp/outBounds',
+                        data: JSON.stringify(data[0].Sheet1),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        type: 'post',
+                        async: false,
+                        success: function (result) {
+                            if (result.success) {
+                                layer.msg("导入成功", {icon: 1, time: 1000});
+                                window.refresh();
+                            } else {
+                                layer.msg(result.msg, {icon: 2, time: 5000});
+                            }
+                        }
+                    })
+                });
+            } catch
+                (e) {
+                layer.alert(e.message)
+            }
+
+        }
+
+
+    })
+</script>
+</body>
+</html>

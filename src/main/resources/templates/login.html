@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8">
+    <title> 仓储管理 - Bate </title>
+    <!-- 样 式 文 件 -->
+    <link rel="icon" type="image/jpg" href="./admin/images/logo-1.png"/>
+    <link rel="stylesheet" href="component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="admin/css/other/login.css"/>
+</head>
+<!-- 代 码 结 构 -->
+<body background="admin/images/background.svg" style="background-size: cover;">
+<form class="layui-form" action="">
+    <div>
+        <img src="admin/images/logo.png" style="vertical-align: middle;margin-left: -150px"/>
+    </div>
+    <div class="layui-form-item">
+        <input name="userName" type="text" placeholder="账 户 : admin " value="admin" hover class="layui-input"/>
+    </div>
+    <div class="layui-form-item">
+        <input name="passWord" type="password" placeholder="密 码 : admin " value="admin" hover class="layui-input"/>
+    </div>
+    <div class="layui-form-item">
+        <button type="button" class="pear-btn pear-btn-success login" lay-submit lay-filter="login">
+            登 入
+        </button>
+    </div>
+</form>
+<!-- 资 源 引 入 -->
+<script src="component/layui/layui.js"></script>
+<script src="component/pear/pear.js"></script>
+<script>
+    layui.use(['form', 'jquery', 'layer', 'button', 'popup'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let popup = layui.popup;
+        form.on('submit(login)', function (data) {
+            let loader = layer.load();
+            $.ajax({
+                url: '/login.do',
+                data: JSON.stringify(data.field),
+                type: "post",
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    layer.close(loader);
+                    if (result.success) {
+                        popup.success(result.msg, function () {
+                            location.href = "/index";
+                        })
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                }
+            });
+            return false;
+        });
+
+    })
+</script>
+</body>
+</html>

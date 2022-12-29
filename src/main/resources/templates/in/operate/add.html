@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>新增入库</title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../../font/iconfont.css"/>
+</head>
+<body>
+<form class="layui-form" action="" lay-filter="inForm" onsubmit="return false">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="main-container">
+                <div class="layui-form-item layui-hide">
+                    <label class="layui-form-label">仓库编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="storeId" lay-verify="" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                       style="color: red"></i>仓库名称</label>
+                    <div class="layui-input-inline">
+                        <select name="storeFilter" id="storeFilter" lay-verify="required" lay-filter="storeFilter"
+                                lay-search class="layui-form-select">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-hide">
+                    <label class="layui-form-label">物资编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="itemId" lay-verify="" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                       style="color: red"></i>物资名称</label>
+                    <div class="layui-input-inline">
+                        <select name="itemFilter" id="itemFilter" lay-verify="required" lay-filter="itemFilter"
+                                lay-search
+                                class="layui-form-select">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                       style="color: red"></i>数量</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="orderQty" lay-verify="" autocomplete="off"
+                               placeholder="必须为正整数"
+                               onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">订购单位</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="orderUnit" lay-verify="" autocomplete="off" readonly
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="issueQty" lay-verify="" autocomplete="off"
+                               placeholder="必须为正整数"
+                               onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">销售单位</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="issueUnit" lay-verify="" autocomplete="off" readonly
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="remark" lay-verify="title" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="in-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="pear-btn pear-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script>
+    layui.use(['form', 'jquery', 'layer'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        function formatDate(data) {
+            var d = new Date(data),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
+        form.on('submit(in-save)', function (data) {
+            let orderQty = data.field['orderQty']
+            let issueQty = data.field['issueQty']
+
+            if (orderQty == '' && issueQty == '') {
+                layer.msg("最少入库数量为1", {icon: 2, time: 1000});
+            }
+
+            data.field['addDate'] = formatDate(new Date());
+            layer.confirm('是否确认?', {icon: 3, title: '提示'}, function (index) {
+                $.ajax({
+                    url: '/in/save',
+                    data: JSON.stringify(data.field),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    type: 'post',
+                    success: function (result) {
+                        if (result.success) {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            layer.msg(result.msg, {icon: 1, time: 1000});
+                            parent.layui.table.reload("in-table");
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+                layer.close(index);
+            })
+
+            return false;
+        });
+
+
+        $.ajax({
+            url: 'stores?status=1',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    $('#storeFilter').append(new Option(item.storeName, item.id));
+                });
+                layui.form.render("select");
+            }
+        })
+
+        $.ajax({
+            url: 'items?status=1',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    $('#itemFilter').append(new Option(item.itemName, item.id));
+                });
+                layui.form.render("select");
+            }
+        })
+
+        form.on('select(storeFilter)', function (data) {
+            form.val('inForm', {
+                storeId: data.value
+            })
+        })
+
+        form.on('select(itemFilter)', function (data) {
+            if (data.value == null || data.value == '') {
+                return false;
+            }
+            $.ajax({
+                url: 'items?id=' + data.value,
+                dataType: 'json',
+                type: 'get',
+                success: function (data) {
+                    form.val('inForm', {
+                        orderUnit: data[0].orderUnit,
+                        issueUnit: data[0].issueUnit,
+                        itemId: data[0].id
+                    })
+                }
+            })
+        })
+
+    })
+
+
+</script>
+
+</body>
+</html>

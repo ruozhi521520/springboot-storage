@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>新增出库</title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../../font/iconfont.css"/>
+</head>
+<body>
+<form class="layui-form" action="" lay-filter="outForm">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-row">
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item layui-hide">
+                        <label class="layui-form-label">仓库编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="storeId" lay-verify="" autocomplete="off" id="storeId"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                           style="color: red"></i>仓库名称</label>
+                        <div class="layui-input-inline">
+                            <select name="storeName" id="storeFilter" lay-verify="required"
+                                    lay-filter="storeFilter"
+                                    lay-search class="layui-form-select">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item layui-hide">
+                        <label class="layui-form-label">买家编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="buyerId" lay-verify="" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                           style="color: red"></i>买家名称</label>
+                        <div class="layui-input-inline">
+                            <select name="buyerName" id="buyerFilter" lay-verify="required"
+                                    lay-filter="buyerFilter"
+                                    lay-search class="layui-form-select">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否代收</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="isPayment" lay-filter="isPayment" value="0" title="否" checked="">
+                            <input type="radio" name="isPayment" lay-filter="isPayment" value="1" title="是">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item layui-hide">
+                        <label class="layui-form-label ">物资编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="itemId" lay-verify="" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                           style="color: red"></i>物资名称</label>
+                        <div class="layui-input-inline">
+                            <select name="itemFilter" id="itemFilter" lay-verify="required" lay-filter="itemFilter"
+                                    lay-search
+                                    class="layui-form-select">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item ">
+                        <label class="layui-form-label ">转换系数</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="coeffiCient" lay-verify="" autocomplete="off" readonly
+                                   id="coeffiCient"
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4 ">
+                    <div class="layui-form-item isCheck">
+                        <label class="layui-form-label">是否回款</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="isCheck" lay-filter="isCheck" value="0" title="否" checked="">
+                            <input type="radio" name="isCheck" lay-filter="isCheck" value="1" title="是">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-row">
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">数量</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="orderQty" autocomplete="off" lay-verify="" value="0" id="orderQty"
+                                   lay-filter="orderQtyFilter"
+                                   placeholder="必须为正整数"
+                                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">数量</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="issueQty" lay-verify="" autocomplete="off" value="0" id="issueQty"
+                                   placeholder="必须为正整数"
+                                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">订购单位</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="orderUnit" lay-verify="" autocomplete="off" readonly
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">销售单位</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="issueUnit" lay-verify="" autocomplete="off" readonly
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">剩余</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="orderQty1" lay-verify="" autocomplete="off" readonly
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">剩余</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="issueQty1" lay-verify="" autocomplete="off" readonly
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-row">
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                           style="color: red"></i>单价</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="issueCost" lay-verify="required" autocomplete="off" id="issueCost"
+                                   placeholder="最多2位小数"
+                                   onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单价底价</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="unitFloor" lay-verify="" autocomplete="off" readonly id="unitFloor"
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><i class="iconfont icon-bitian2"
+                                                           style="color: red"></i>总价</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="lineCost" lay-verify="required" autocomplete="off" id="lineCost"
+                                   step="0.01"
+                                   placeholder="最多2位小数"
+                                   onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">总价底价</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="lineFloor" lay-verify="" autocomplete="off" readonly id="lineFloor"
+                                   disabled="disabled" style="background: #edeeee"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="remark" lay-verify="title" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="in-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="pear-btn pear-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script>
+    layui.use(['form', 'jquery', 'layer', 'element'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layer = layui.layer;
+        let element = layui.element;
+
+        function formatDate(data) {
+            var d = new Date(data),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
+        form.on('radio(isPayment)', function (data) {
+
+            if (data.value === '1') {
+                layer.msg('提示：已代收，默认为已回款');
+                $(".isCheck").hide();
+            } else {
+                $(".isCheck").show();
+            }
+
+        })
+
+        form.on('submit(in-save)', function (data) {
+            var orderQty = data.field.orderQty;
+            var issueQty = data.field.issueQty;
+            var coeffiCient = data.field.coeffiCient;
+
+            var orderQty1 = data.field.orderQty1;
+            var issueQty1 = data.field.issueQty1;
+
+            if (orderQty == null || orderQty === '') {
+                orderQty = 0;
+            }
+            if (issueQty == null || issueQty === '') {
+                issueQty = 0;
+            }
+
+            var total = parseInt(orderQty) * parseInt(coeffiCient) + parseInt(issueQty);
+            var total1 = parseInt(orderQty1) * parseInt(coeffiCient) + parseInt(issueQty1);
+
+            if (total === 0) {
+                layer.msg("老妹啊，最少出库数量为1", {icon: 2, time: 1000});
+                return false;
+            }
+
+            if (total > total1) {
+                layer.msg("老妹啊，出库数量大于库存数量了！", {icon: 2, time: 1000});
+                return false;
+            }
+
+            var isPayment = data.field.isPayment;
+            if (isPayment === '1') {
+                data.field.isCheck = '1';
+            }
+            data.field['addDate'] = formatDate(new Date());
+
+            layer.confirm('是否确认?', {icon: 3, title: '提示'}, function (index) {
+                $.ajax({
+                    url: '/out/save',
+                    data: JSON.stringify(data.field),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    type: 'post',
+                    success: function (result) {
+                        if (result.success) {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            layer.msg(result.msg, {icon: 1, time: 1000});
+                            parent.layui.table.reload("out-table");
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+                layer.close(index);
+            })
+
+            return false;
+        });
+
+        /**初始化 仓库 下拉菜单*/
+        $.ajax({
+            url: 'stores?status=1',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    $('#storeFilter').append(new Option(item.storeName, item.id));
+                });
+                layui.form.render("select");
+            }
+        });
+
+        /** 初始化 买家 下拉菜单*/
+        $.ajax({
+            url: 'buyers',
+            dataType: 'json',
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    $('#buyerFilter').append(new Option(item.buyerName, item.id));
+                });
+                layui.form.render("select");
+            }
+        });
+
+        form.on('select(storeFilter)', function (data) {
+            $("#itemFilter").empty();
+            $("#itemFilter").append(new Option("请选择", ""));
+            layui.form.render("select");
+
+            if (data.value == null || data.value == '') {
+                return false;
+            }
+
+            $.ajax({
+                url: 'invs?storeId=' + data.value,
+                dataType: 'json',
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    $.each(data, function (index, item) {
+                        $('#itemFilter').append(new Option(item.itemName, item.itemId));
+                    });
+                    layui.form.render("select");
+                }
+            })
+
+            form.val('outForm', {
+                storeId: data.value
+            })
+        });
+
+        form.on('select(itemFilter)', function (data) {
+            if (data.value == null || data.value == '') {
+                return false;
+            }
+
+            var storeId = document.getElementById("storeId");
+
+            $.ajax({
+                url: 'invs?itemId=' + data.value + '&storeId=' + storeId.value,
+                dataType: 'json',
+                type: 'get',
+                success: function (data) {
+                    form.val('outForm', {
+                        orderUnit: data[0].orderUnit,
+                        issueUnit: data[0].issueUnit,
+                        unitFloor: data[0].unitFloor,
+                        orderQty1: data[0].orderQty,
+                        issueQty1: data[0].issueQty,
+                        issueCost: data[0].issueCost,
+                        coeffiCient: data[0].coeffiCient,
+                        itemId: data[0].itemId
+                    })
+                }
+            })
+        });
+
+        form.on('select(buyerFilter)', function (data) {
+            form.val('outForm', {
+                buyerId: data.value
+            })
+        });
+
+        $("#orderQty").on("input", function (e) {
+            total();
+        });
+        $("#issueQty").on("input", function (e) {
+            total();
+        });
+        $("#issueCost").on("input", function (e) {
+            total();
+        });
+
+        function total() {
+            var orderQty = document.getElementById('orderQty').value;
+            var issueQty = document.getElementById('issueQty').value;
+            var coeffiCient = document.getElementById('coeffiCient').value;
+            var issueCost = document.getElementById('issueCost').value;
+            var unitFloor = document.getElementById('unitFloor').value;
+            if (orderQty == null || orderQty === '') {
+                orderQty = 0;
+            }
+            if (issueQty == null || issueQty === '') {
+                issueQty = 0;
+            }
+            if (issueCost == null || issueCost === '') {
+                issueCost = 0;
+            }
+            if (coeffiCient == null || coeffiCient === '') {
+                coeffiCient = 1;
+            }
+
+
+            var lineCost = (parseInt(orderQty) * parseInt(coeffiCient) + parseInt(issueQty)) * parseFloat(issueCost);
+            var lineFloor = (parseInt(orderQty) * parseInt(coeffiCient) + parseInt(issueQty)) * parseFloat(unitFloor);
+
+            document.getElementById("lineCost").value = parseFloat(lineCost).toFixed(2);
+            document.getElementById("lineFloor").value = parseFloat(lineFloor).toFixed(2);
+
+
+        };
+
+
+    })
+
+
+</script>
+
+</body>
+</html>

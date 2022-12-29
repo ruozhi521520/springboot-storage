@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.InventoryMapper">
+
+    <select id="selectList" resultType="cn.lu.lrp.entity.Inventory">
+        select inv.id,li.id as itemId, li.itemName,li.unitFloor,li.lineFloor,
+        inv.orderQty, li.orderUnit,
+        inv.issueQty,li.issueCost,li.coeffiCient,
+        li.issueUnit,ls.id as storeId, ls.storeName
+        from lrp_inventory inv
+        left join lrp_item li on inv.itemId = li.id
+        left join lrp_store ls on inv.storeId = ls.id
+        <where>
+            <if test="itemId != null and itemId != ''">
+                and li.id = #{itemId}
+            </if>
+            <if test="storeId != null and storeId != ''">
+                and ls.id = #{storeId}
+            </if>
+            <if test="itemName != null and itemName != ''">
+                and li.itemName like concat('%', '${itemName}', '%')
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and ls.storeName like concat('%', '${storeName}', '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectInvFromItemIdAndStoreId" resultType="cn.lu.lrp.entity.Inventory">
+        select inv.id, li.itemName, inv.orderQty, li.orderUnit, inv.issueQty, li.issueUnit, ls.storeName,li.coeffiCient
+        from lrp_inventory inv
+        left join lrp_item li on inv.itemId = li.id
+        left join lrp_store ls on inv.storeId = ls.id
+        <where>
+            <if test="itemId != null and itemId != ''">
+                and inv.itemId = ${itemId}
+            </if>
+            <if test="storeId != null and storeId != ''">
+                and inv.storeId = ${storeId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="add" parameterType="cn.lu.lrp.entity.Inventory">
+        insert into lrp_inventory(itemId, orderQty, issueQty, storeId)
+        values (#{itemId}, #{orderQty}, #{issueQty}, #{storeId})
+    </insert>
+
+
+    <update id="update" parameterType="cn.lu.lrp.entity.Inventory">
+        update lrp_inventory
+        set orderQty = #{orderQty},
+            issueQty = #{issueQty}
+        where id = #{id}
+    </update>
+
+</mapper>

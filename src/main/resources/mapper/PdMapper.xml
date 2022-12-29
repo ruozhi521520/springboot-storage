@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.PdMapper">
+
+    <select id="selectList" resultType="cn.lu.lrp.entity.Pd">
+        select lp.*, ls.storeName
+        from lrp_pd lp
+        left join lrp_store ls on lp.storeId = ls.id
+        <where>
+            <if test="pdName != null and pdName != ''">
+                and pdName = #{pdName}
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectPd" resultType="cn.lu.lrp.entity.Pd">
+        select *
+        from lrp_pd
+        <where>
+            <if test="storeId != null and storeId != ''">
+                and storeId = #{storeId}
+            </if>
+            <if test="year != null and year != ''">
+                and year = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and month = #{month}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectLineList" resultType="cn.lu.lrp.entity.PdLine">
+        select inv.id,
+               li.id as itemId,
+               li.itemName,
+               li.unitFloor,
+               li.lineFloor,
+               inv.orderQty,
+               li.orderUnit,
+               inv.issueQty,
+               li.issueUnit,
+               li.issueCost,
+               li.coeffiCient,
+               li.issueUnit,
+               ls.id as storeId,
+               ls.storeName
+        from lrp_pdline inv
+                 left join lrp_item li on inv.itemId = li.id
+                 left join lrp_store ls on inv.storeId = ls.id
+        where pdId = #{id}
+    </select>
+
+    <insert id="save" parameterType="cn.lu.lrp.entity.Pd" useGeneratedKeys="true" keyProperty="id">
+        insert into lrp_pd(year, month, pdName, storeId, remark, addDate)
+        values (#{year}, #{month}, #{pdName}, #{storeId}, #{remark}, sysdate());
+    </insert>
+
+    <insert id="saveLine" parameterType="cn.lu.lrp.entity.PdLine">
+        insert into lrp_pdline (pdId, itemId, orderQty, issueQty, storeId)
+        select #{id},
+               itemId,
+               orderQty,
+               issueQty,
+               storeId
+        from lrp_inventory
+        where storeId = #{storeId};
+    </insert>
+
+
+</mapper>

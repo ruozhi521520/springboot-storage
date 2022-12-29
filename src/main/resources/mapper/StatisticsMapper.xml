@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lu.lrp.dto.StatisticsMapper">
+
+    <select id="selectThisWeek" resultType="cn.lu.lrp.entity.Statistics">
+        select lo.storeName,
+               SUM(CASE lo.month WHEN '1' THEN lo.total ELSE 0 END)  as January,
+               SUM(CASE lo.month WHEN '2' THEN lo.total ELSE 0 END)  as February,
+               SUM(CASE lo.month WHEN '3' THEN lo.total ELSE 0 END)  as March,
+               SUM(CASE lo.month WHEN '4' THEN lo.total ELSE 0 END)  as April,
+               SUM(CASE lo.month WHEN '5' THEN lo.total ELSE 0 END)  as May,
+               SUM(CASE lo.month WHEN '6' THEN lo.total ELSE 0 END)  as June,
+               SUM(CASE lo.month WHEN '7' THEN lo.total ELSE 0 END)  as July,
+               SUM(CASE lo.month WHEN '8' THEN lo.total ELSE 0 END)  as August,
+               SUM(CASE lo.month WHEN '9' THEN lo.total ELSE 0 END)  as September,
+               SUM(CASE lo.month WHEN '10' THEN lo.total ELSE 0 END) as October,
+               SUM(CASE lo.month WHEN '11' THEN lo.total ELSE 0 END) as November,
+               SUM(CASE lo.month WHEN '12' THEN lo.total ELSE 0 END) as December
+        from (select ls.storeName, month(bri.adddate) as month, round(sum(linecost), 2) as total
+              from lrp_outbound bri
+                       left join lrp_store ls on bri.storeId = ls.id
+              where date_format(bri.adddate, '%Y') = DATE_FORMAT(NOW(), '%Y')
+              group by ls.storeName, month(bri.adddate)) as lo
+        group by lo.storeName
+    </select>
+
+
+</mapper>

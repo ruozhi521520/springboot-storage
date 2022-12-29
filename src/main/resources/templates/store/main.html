@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>仓库管理</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">仓库名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="storeName" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="store-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="store-table" lay-filter="store-table" class="layui-hide"></table>
+    </div>
+</div>
+
+<script type="text/html" id="store-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+</script>
+
+<script type="text/html" id="store-enable">
+    <input type="checkbox" value="{{d.id}}" name="enable" lay-skin="switch" lay-filter="store-enable" lay-text="启用|禁用"
+           {{
+           d.status ? 'checked' : '' }} >
+</script>
+
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'common'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+
+        let cols = [
+            [
+                {title: '序号', field: 'id', align: 'center',},
+                {title: '仓库名称', field: 'storeName', align: 'center'},
+                {title: '联系人', field: 'contacts', align: 'center'},
+                {title: '联系方式', field: 'phone', align: 'center'},
+                {title: '备注', field: 'remark', align: 'center',},
+                {title: '启用', field: 'enable', align: 'center', templet: '#store-enable'}
+            ]
+        ]
+
+        table.render({
+            elem: '#store-table',
+            url: '/store/stores',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            even: true,
+            toolbar: '#store-toolbar',
+            defaultToolbar: [{
+                title: '刷新',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            },],
+            text: {none: '未到找对应的数据'},
+            limits: [10, 20, 40, 60, 80]
+        });
+
+        table.on('toolbar(store-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'export') {
+                window.export(obj);
+            }
+        });
+
+        form.on('submit(store-query)', function (data) {
+            window.refresh(data.field);
+            return false;
+        });
+
+        form.on('switch(store-enable)', function (obj) {
+            $.ajax({
+                type: 'post',
+                url: '/store/update',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: '{"id":' + this.value + ',"status":' + obj.elem.checked + '}',
+                error: function (data) {
+                    layer.msg(data.msg, {icon: 2, time: 1000});
+                },
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg, {icon: 1, time: 1000});
+                    } else {
+                        layer.msg(data.msg, {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增',
+                shade: 0.1,
+                area: [common.isModile() ? '100%' : '440px', common.isModile() ? '100%' : '400px'],
+                content: 'add'
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('store-table', {where: param});
+        }
+    })
+</script>
+</body>
+</html>
