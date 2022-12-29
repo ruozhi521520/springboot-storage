@@ -26,16 +26,19 @@
 
 * 登录页
 
-![image](https://github.com/ruozhi521520/springboot-storage)
+![image](https://github.com/ruozhi521520/springboot-storage/blob/master/image/login.png?raw=true)
 
 * 首页
 
-![image](https://github.com/ruozhi521520/springboot-storage)
+![image](https://github.com/ruozhi521520/springboot-storage/blob/master/image/index.png?raw=true)
+
 
 * 今日出库
 
-![image](https://github.com/ruozhi521520/springboot-storage)
+![image](https://github.com/ruozhi521520/springboot-storage/blob/master/image/out.png?raw=true)
 
-* 今日入库
 
-![image](https://github.com/ruozhi521520/springboot-storage)
+* 库存管理
+
+![image](https://github.com/ruozhi521520/springboot-storage/blob/master/image/inv.png?raw=true)
+
