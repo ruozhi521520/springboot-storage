@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * @program: cn.lu.lrp.entity.Item
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-04-05
  * @version: <p> 2021-04-05 14:26 1、   lull
  **/

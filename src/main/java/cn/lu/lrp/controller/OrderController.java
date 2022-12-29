@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @program: cn.lu.lrp.controller.BuyerController
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-04-03
  * @version: <p> 2021-04-03 16:53 1、   lull
  **/

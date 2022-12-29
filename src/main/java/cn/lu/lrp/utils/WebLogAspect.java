@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 /**
  * @program: cn.lu.lrp.utils.WebLogAspect
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-01-19
  * @version: <p> 2021-01-19 16:37 1、   lull
  **/

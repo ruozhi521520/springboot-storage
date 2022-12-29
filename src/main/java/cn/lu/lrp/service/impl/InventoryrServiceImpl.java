@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * @program: cn.lu.lrp.service.impl.BuyerServiceImpl
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-04-05
  * @version: <p> 2021-04-05 14:29 1、   lull
  **/

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * @program: cn.lu.lrp.controller.LoginController
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-04-03
  * @version: <p> 2021-04-03 10:20 1、 登录控制器  lull
  **/

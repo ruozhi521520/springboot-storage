@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @program: cn.lu.lrp.config.LoginHandlerInterceptor
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-01-18
  * @version: <p> 2021-01-18 22:13 1、   lull
  **/

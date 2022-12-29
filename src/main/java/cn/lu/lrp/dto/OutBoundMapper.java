@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @program: cn.lu.lrp.dto.OutBoundMapper
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-04-03
  * @version: <p> 2021-04-03 16:53 1、   lull
  **/

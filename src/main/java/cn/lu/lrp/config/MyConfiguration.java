@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @program: cn.lu.inventory.config.MyMvcConfig
- * @author: lull lull@shuto.cn
+ * @author: lull  
  * @create: 2021-01-18
  * @version: <p> 2021-01-18 22:15 1、   lull
  **/
